@@ -1,6 +1,6 @@
-// Inventario.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './index.css';
 
 const Inventario = () => {
   const [productos, setProductos] = useState([]);
@@ -31,7 +31,7 @@ const Inventario = () => {
       body: JSON.stringify(nuevoProducto)
     });
     setNuevoProducto({ codigo: '', nombre: '', categoria: '', stock_minimo: 5 });
-    cargarProductos(); // Recargar la tabla
+    cargarProductos();
   };
 
   const registrarMovimiento = async (producto_id, tipo_movimiento, cantidad) => {
@@ -41,59 +41,64 @@ const Inventario = () => {
       body: JSON.stringify({ producto_id, tipo_movimiento, cantidad })
     });
     if (!res.ok) alert('Error: Verifica que haya suficiente stock para la salida.');
-    cargarProductos(); // El trigger de PostgreSQL ya actualizó el stock, solo recargamos
+    cargarProductos();
   };
 
   return (
     <div>
-      {/* Barra de Navegación */}
-      <nav style={{ background: '#333', color: 'white', padding: '15px', display: 'flex', justifyContent: 'space-between' }}>
-        <h2 style={{ margin: 0 }}>Repuestos Ebenezer</h2>
-        <button onClick={cerrarSesion} style={{ background: 'red', color: 'white', border: 'none', padding: '5px 15px', cursor: 'pointer' }}>
-          Cerrar Sesión
-        </button>
+      <nav className="navbar">
+        <h2>Repuestos Ebenezer</h2>
+        <button onClick={cerrarSesion} className="btn btn-danger">Cerrar Sesión</button>
       </nav>
 
-      <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
-        
-        {/* Formulario de Nuevo Producto */}
-        <div style={{ background: '#f4f4f4', padding: '15px', marginBottom: '20px', border: '1px solid #ddd' }}>
-          <h4>Registrar Nuevo Repuesto</h4>
-          <form onSubmit={agregarProducto} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-            <input placeholder="Código (ej. REP-003)" value={nuevoProducto.codigo} onChange={e => setNuevoProducto({...nuevoProducto, codigo: e.target.value})} required />
-            <input placeholder="Nombre de la pieza" value={nuevoProducto.nombre} onChange={e => setNuevoProducto({...nuevoProducto, nombre: e.target.value})} required />
-            <input placeholder="Categoría" value={nuevoProducto.categoria} onChange={e => setNuevoProducto({...nuevoProducto, categoria: e.target.value})} required />
-            <input type="number" placeholder="Stock Mínimo" value={nuevoProducto.stock_minimo} onChange={e => setNuevoProducto({...nuevoProducto, stock_minimo: Number(e.target.value)})} required />
-            <button type="submit">Agregar a BD</button>
+      <div className="inventory-container">
+        <div className="form-panel">
+          <h3 style={{marginTop: 0}}>Registrar Nuevo Repuesto</h3>
+          <form onSubmit={agregarProducto}>
+            <input className="form-input" placeholder="Código (ej. REP-003)" value={nuevoProducto.codigo} onChange={e => setNuevoProducto({...nuevoProducto, codigo: e.target.value})} required />
+            <input className="form-input" style={{flex: 2}} placeholder="Nombre de la pieza" value={nuevoProducto.nombre} onChange={e => setNuevoProducto({...nuevoProducto, nombre: e.target.value})} required />
+            <input className="form-input" placeholder="Categoría" value={nuevoProducto.categoria} onChange={e => setNuevoProducto({...nuevoProducto, categoria: e.target.value})} required />
+            <input className="form-input" style={{width: '100px'}} type="number" placeholder="Mínimo" value={nuevoProducto.stock_minimo} onChange={e => setNuevoProducto({...nuevoProducto, stock_minimo: Number(e.target.value)})} required />
+            <button className="btn btn-primary" type="submit">Agregar</button>
           </form>
         </div>
 
-        {/* Tabla de Inventario */}
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-          <thead>
-            <tr style={{ background: '#eee', borderBottom: '2px solid black' }}>
-              <th style={{ padding: '8px' }}>Código</th>
-              <th style={{ padding: '8px' }}>Nombre</th>
-              <th style={{ padding: '8px' }}>Stock Actual / Mínimo</th>
-              <th style={{ padding: '8px' }}>Acciones rápidas</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productos.map((prod) => (
-              <tr key={prod.id} style={{ borderBottom: '1px solid #ddd' }}>
-                <td style={{ padding: '8px' }}>{prod.codigo}</td>
-                <td style={{ padding: '8px' }}>{prod.nombre}</td>
-                <td style={{ padding: '8px', fontWeight: 'bold', color: prod.stock_actual <= prod.stock_minimo ? 'red' : 'green' }}>
-                  {prod.stock_actual} / {prod.stock_minimo}
-                </td>
-                <td style={{ padding: '8px', display: 'flex', gap: '5px' }}>
-                  <button onClick={() => registrarMovimiento(prod.id, 'entrada', 5)} style={{ background: '#4CAF50', color: 'white', border: 'none', padding: '5px' }}>+5 Ingreso</button>
-                  <button onClick={() => registrarMovimiento(prod.id, 'salida', 1)} style={{ background: '#f44336', color: 'white', border: 'none', padding: '5px' }}>-1 Venta</button>
-                </td>
+        <div className="table-panel">
+          <h3 style={{marginTop: 0}}>Gestión de Stock</h3>
+          <table className="inventory-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Stock Actual / Mínimo</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {productos.map((prod) => (
+                <tr key={prod.id}>
+                  <td><strong>{prod.codigo}</strong></td>
+                  <td>{prod.nombre}</td>
+                  <td>{prod.categoria}</td>
+                  <td>
+                    <span style={{ 
+                      background: prod.stock_actual <= prod.stock_minimo ? '#fee2e2' : '#dcfce7',
+                      color: prod.stock_actual <= prod.stock_minimo ? '#991b1b' : '#166534',
+                      padding: '5px 10px', borderRadius: '15px', fontWeight: 'bold'
+                    }}>
+                      {prod.stock_actual} / {prod.stock_minimo}
+                    </span>
+                  </td>
+                  <td style={{ display: 'flex', gap: '8px' }}>
+                    <button onClick={() => registrarMovimiento(prod.id, 'entrada', 5)} className="btn btn-success">+5</button>
+                    <button onClick={() => registrarMovimiento(prod.id, 'salida', 1)} className="btn btn-danger">-1</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

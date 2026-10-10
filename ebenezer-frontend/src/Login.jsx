@@ -1,6 +1,6 @@
-// Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './index.css'; // Aseguramos que cargue el CSS
 
 const Login = () => {
   const [correo, setCorreo] = useState('');
@@ -23,14 +23,17 @@ const Login = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '400px', margin: '50px auto', border: '1px solid black' }}>
-      <h3 style={{ textAlign: 'center' }}>Inicio de sesión</h3>
-      <form onSubmit={manejarIngreso} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <input type="email" placeholder="Correo" value={correo} onChange={e => setCorreo(e.target.value)} required />
-        <input type="password" placeholder="Contraseña" value={contrasena} onChange={e => setContrasena(e.target.value)} required />
-        <button type="submit">[ Ingresar ]</button>
+    <div className="login-container">
+      <h2>Iniciar Sesión</h2>
+      <p style={{color: '#666'}}>Acceso al sistema Ebenezer</p>
+      
+      <form onSubmit={manejarIngreso} className="login-form">
+        <input className="form-input" type="email" placeholder="Correo electrónico" value={correo} onChange={e => setCorreo(e.target.value)} required />
+        <input className="form-input" type="password" placeholder="Contraseña" value={contrasena} onChange={e => setContrasena(e.target.value)} required />
+        <button className="btn btn-primary" type="submit">Ingresar al sistema</button>
       </form>
     </div>
   );
 };
+
 export default Login;
