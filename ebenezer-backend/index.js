@@ -6,4 +6,5 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/auth', require('./auth'));
 app.use('/api/productos', require('./productos'));
+app.use('/api/usuarios', require('./usuarios'));
 app.listen(3000, () => console.log('API de Repuestos Ebenezer en puerto 3000'));

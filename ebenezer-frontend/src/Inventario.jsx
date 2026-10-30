@@ -4,8 +4,10 @@ import './index.css';
 
 const Inventario = () => {
   const [productos, setProductos] = useState([]);
+  const [busqueda, setBusqueda] = useState('');
   const [nuevoProducto, setNuevoProducto] = useState({ codigo: '', nombre: '', categoria: '', stock_minimo: 5 });
   const navigate = useNavigate();
+  const rol = localStorage.getItem('rol');
 
   const cargarProductos = () => {
     fetch('http://localhost:3000/api/productos')
@@ -44,11 +46,23 @@ const Inventario = () => {
     cargarProductos();
   };
 
+  // Lógica del filtro de búsqueda
+  const productosFiltrados = productos.filter(prod => 
+    prod.codigo.toLowerCase().includes(busqueda.toLowerCase()) ||
+    prod.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+    prod.categoria.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
   return (
     <div>
       <nav className="navbar">
         <h2>Repuestos Ebenezer</h2>
-        <button onClick={cerrarSesion} className="btn btn-danger">Cerrar Sesión</button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          {rol === 'Administrador' && (
+            <button onClick={() => navigate('/usuarios')} className="btn btn-primary" style={{ background: '#34495e' }}>Usuarios</button>
+          )}
+          <button onClick={cerrarSesion} className="btn btn-danger">Cerrar Sesión</button>
+        </div>
       </nav>
 
       <div className="inventory-container">
@@ -64,7 +78,18 @@ const Inventario = () => {
         </div>
 
         <div className="table-panel">
-          <h3 style={{marginTop: 0}}>Gestión de Stock</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+            <h3 style={{ margin: 0 }}>Gestión de Stock</h3>
+            {/* Barra de Búsqueda */}
+            <input 
+              className="form-input" 
+              placeholder="Buscar código, nombre o categoría..." 
+              value={busqueda} 
+              onChange={e => setBusqueda(e.target.value)}
+              style={{ width: '300px' }}
+            />
+          </div>
+
           <table className="inventory-table">
             <thead>
               <tr>
@@ -76,7 +101,8 @@ const Inventario = () => {
               </tr>
             </thead>
             <tbody>
-              {productos.map((prod) => (
+              {/* Iteramos sobre el arreglo filtrado, no el original */}
+              {productosFiltrados.map((prod) => (
                 <tr key={prod.id}>
                   <td><strong>{prod.codigo}</strong></td>
                   <td>{prod.nombre}</td>
@@ -93,6 +119,7 @@ const Inventario = () => {
                   <td style={{ display: 'flex', gap: '8px' }}>
                     <button onClick={() => registrarMovimiento(prod.id, 'entrada', 5)} className="btn btn-success">+5</button>
                     <button onClick={() => registrarMovimiento(prod.id, 'salida', 1)} className="btn btn-danger">-1</button>
+                    <button onClick={() => navigate(`/editar/${prod.id}`)} className="btn btn-primary" style={{ background: '#6c757d' }}>Editar</button>
                   </td>
                 </tr>
               ))}

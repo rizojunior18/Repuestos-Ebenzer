@@ -18,6 +18,7 @@ const Login = () => {
       const datos = await respuesta.json();
       if (!respuesta.ok) throw new Error(datos.error);
       localStorage.setItem('token', datos.token);
+      localStorage.setItem('rol', datos.rol);
       navigate('/inventario');
     } catch (err) { alert(err.message); }
   };
