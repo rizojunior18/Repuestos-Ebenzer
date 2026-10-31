@@ -8,7 +8,7 @@ const Usuarios = () => {
   const navigate = useNavigate();
 
   const cargarUsuarios = () => {
-    fetch('http://localhost:3000/api/usuarios')
+    fetch('https://repuestos-ebenzer.onrender.com/api/usuarios')
       .then(res => res.json())
       .then(data => setUsuarios(data));
   };
@@ -29,7 +29,7 @@ const Usuarios = () => {
 
   const agregarUsuario = async (e) => {
     e.preventDefault();
-    const res = await fetch('http://localhost:3000/api/usuarios', {
+    const res = await fetch('https://repuestos-ebenzer.onrender.com/api/usuarios', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(nuevoUsuario)
@@ -44,7 +44,7 @@ const Usuarios = () => {
 
   const cambiarEstado = async (id, estadoActual) => {
     const nuevoEstado = estadoActual === 'activo' ? 'inactivo' : 'activo';
-    await fetch(`http://localhost:3000/api/usuarios/${id}/estado`, {
+    await fetch(`https://repuestos-ebenzer.onrender.com/api/usuarios/${id}/estado`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ estado: nuevoEstado })

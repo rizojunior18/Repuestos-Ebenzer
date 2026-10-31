@@ -45,7 +45,7 @@ const Inventario = () => {
   };
 
   const registrarMovimiento = async (producto_id, tipo_movimiento, cantidad) => {
-    const res = await fetch('http://localhost:3000/api/productos/movimiento', {
+    const res = await fetch('https://repuestos-ebenzer.onrender.com/api/productos/movimiento', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ producto_id, tipo_movimiento, cantidad })
@@ -60,7 +60,7 @@ const Inventario = () => {
 
   const darDeBaja = async (id) => {
     if (window.confirm('¿Seguro que deseas inactivar este repuesto? Desaparecerá de esta vista.')) {
-      const res = await fetch(`http://localhost:3000/api/productos/${id}/estado`, { method: 'PUT' });
+      const res = await fetch(`https://repuestos-ebenzer.onrender.com/api/productos/${id}/estado`, { method: 'PUT' });
       if (res.ok) {
         toast.info('Repuesto dado de baja');
         cargarProductos();
