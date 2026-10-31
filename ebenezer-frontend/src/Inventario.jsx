@@ -30,7 +30,7 @@ const Inventario = () => {
 
   const agregarProducto = async (e) => {
     e.preventDefault();
-    const res = await fetch('http://localhost:3000/api/productos', {
+    const res = await fetch('https://repuestos-ebenzer.onrender.com/api/productos/movimiento', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(nuevoProducto)
