@@ -12,7 +12,7 @@ const Inventario = () => {
   const rol = localStorage.getItem('rol');
 
   const cargarProductos = () => {
-    fetch('http://localhost:3000/api/productos')
+    fetch('https://repuestos-ebenzer.onrender.com/api/productos/movimiento')
       .then(res => res.json())
       .then(data => setProductos(data));
   };
