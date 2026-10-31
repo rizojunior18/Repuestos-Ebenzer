@@ -142,4 +142,73 @@ const Inventario = () => {
           <div className="form-panel">
             <h3 style={{marginTop: 0}}>Registrar Nuevo Repuesto</h3>
             <form onSubmit={agregarProducto}>
-              <input className="form-input" placeholder="Código (ej. REP-003
+              <input className="form-input" placeholder="Código (ej. REP-003)" value={nuevoProducto.codigo} onChange={e => setNuevoProducto({...nuevoProducto, codigo: e.target.value})} required />
+              <input className="form-input" style={{flex: 2}} placeholder="Nombre de la pieza" value={nuevoProducto.nombre} onChange={e => setNuevoProducto({...nuevoProducto, nombre: e.target.value})} required />
+              <input className="form-input" placeholder="Categoría" value={nuevoProducto.categoria} onChange={e => setNuevoProducto({...nuevoProducto, categoria: e.target.value})} required />
+              <input className="form-input" style={{width: '100px'}} type="number" placeholder="Mínimo" value={nuevoProducto.stock_minimo} onChange={e => setNuevoProducto({...nuevoProducto, stock_minimo: Number(e.target.value)})} required />
+              <button className="btn btn-primary" type="submit">Agregar</button>
+            </form>
+          </div>
+        )}
+
+        <div className="table-panel">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', flexWrap: 'wrap', gap: '10px' }}>
+            <h3 style={{ margin: 0 }}>Gestión de Stock</h3>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <input 
+                className="form-input" 
+                placeholder="Buscar código, nombre o categoría..." 
+                value={busqueda} 
+                onChange={e => setBusqueda(e.target.value)}
+                style={{ width: '300px' }}
+              />
+              <button onClick={exportarExcel} className="btn btn-success">Descargar Excel</button>
+            </div>
+          </div>
+
+          <table className="inventory-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Stock Actual / Mínimo</th>
+                {rol !== 'Gerencia' && <th>Acciones</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {productosFiltrados.map((prod) => (
+                <tr key={prod.id}>
+                  <td><strong>{prod.codigo}</strong></td>
+                  <td>{prod.nombre}</td>
+                  <td>{prod.categoria}</td>
+                  <td>
+                    <span style={{ 
+                      background: prod.stock_actual <= prod.stock_minimo ? '#fee2e2' : '#dcfce7',
+                      color: prod.stock_actual <= prod.stock_minimo ? '#991b1b' : '#166534',
+                      padding: '5px 10px', borderRadius: '15px', fontWeight: 'bold'
+                    }}>
+                      {prod.stock_actual} / {prod.stock_minimo}
+                    </span>
+                  </td>
+                  {rol !== 'Gerencia' && (
+                    <td style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={() => registrarMovimiento(prod.id, 'entrada', 5)} className="btn btn-success" title="Entrada rápida">+5</button>
+                      <button onClick={() => registrarMovimiento(prod.id, 'salida', 1)} className="btn btn-danger" title="Venta rápida">-1</button>
+                      <button onClick={() => navigate(`/editar/${prod.id}`)} className="btn btn-primary" style={{ background: '#6c757d' }}>Editar</button>
+                      {rol === 'Administrador' && (
+                        <button onClick={() => darDeBaja(prod.id)} className="btn btn-danger" style={{ background: '#343a40' }}>Baja</button>
+                      )}
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Inventario;
