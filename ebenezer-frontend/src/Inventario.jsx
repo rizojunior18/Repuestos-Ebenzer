@@ -29,18 +29,28 @@ const Inventario = () => {
   };
 
   const agregarProducto = async (e) => {
-    e.preventDefault();
-    const res = await fetch('https://repuestos-ebenzer.onrender.com/api/productos/movimiento', {
+  e.preventDefault();
+  
+  // Obtener el token de la sesión guardado en localStorage
+  const token = localStorage.getItem('token');
+
+    // Enviar a /api/productos, NO a /movimiento
+    const res = await fetch('https://repuestos-ebenzer.onrender.com/api/productos', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        // Agregar la cabecera de Autorización obligatoria
+        'Authorization': `Bearer ${token}` 
+      },
       body: JSON.stringify(nuevoProducto)
     });
+
     if (res.ok) {
       toast.success('Repuesto agregado exitosamente');
       setNuevoProducto({ codigo: '', nombre: '', categoria: '', stock_minimo: 5 });
       cargarProductos();
     } else {
-      toast.error('Error al agregar (código duplicado)');
+      toast.error('Error al agregar (código duplicado o sesión inválida)');
     }
   };
 
